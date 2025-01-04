@@ -26,7 +26,7 @@ function AppointmentSetup() {
       const dataUrl = canvas.toDataURL("image/png");
       const link = document.createElement("a");
       link.href = dataUrl;
-      link.download = "appointment-details.png";
+      link.download = "appointment-card.png";
       link.click();
     }
   };
@@ -38,7 +38,7 @@ function AppointmentSetup() {
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF();
       pdf.addImage(imgData, "PNG", 10, 10, 180, 0); // Adjust dimensions as needed
-      pdf.save("appointment-details.pdf");
+      pdf.save("appointment-card.pdf");
     }
   };
 
