@@ -5,14 +5,20 @@ import React, { useEffect } from "react";
 import { ShowsComponent } from "./shows";
 import { Ticket } from "./ticket";
 
+import { Reservation } from "./reservation";
+
 function Display() {
   const [showList, setShowList] = React.useState<Array<(typeof shows)[number]>>(
     []
   );
 
-  const [status, setStatus] = React.useState<"show" | "confirm" | "ticket">(
-    "show"
-  );
+  const [status, setStatus] = React.useState<
+    "show" | "confirm" | "ticket" | "reservation"
+  >("show");
+
+  const [loadingStatus, setLoadingStatus] = React.useState<
+    "success" | "error" | "loading"
+  >("loading");
 
   const [selectedShow, setSelectedShow] = React.useState<
     (typeof shows)[number] | null
@@ -55,11 +61,40 @@ function Display() {
         setStatus(
           message.functionCall.name === "confirmDetails" ? "confirm" : "ticket"
         );
+      } else if (
+        message.type === MessageTypeEnum.FUNCTION_CALL &&
+        message.functionCall.name === "checkReservation"
+      ) {
+        const params = message.functionCall.parameters;
+        setConfirmDetails(params);
+        setStatus("reservation");
+
+        fetch("/api/makewebhook", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(params),
+        })
+          .then(async (response) => {
+            const data = await response.json();
+
+            if (response.ok) {
+              console.log("Webhook response:", data);
+              // Based on the webhook response, update the UI
+              setLoadingStatus("success"); // Successfully reserved
+            } else {
+              console.error("Error in webhook response:", data.message);
+              setLoadingStatus("error"); // Failed to reserve
+            }
+          })
+          .catch((error) => {
+            console.error("Error sending reservation to webhook:", error);
+            setLoadingStatus("error");
+          });
       }
     };
 
     const reset = () => {
-      setStatus("show");
+      setStatus("reservation");
       setShowList([]);
       setSelectedShow(null);
     };
@@ -77,11 +112,20 @@ function Display() {
       {showList.length > 0 && status == "show" ? (
         <ShowsComponent showList={showList} />
       ) : null}
-      {status !== "show" ? (
+
+      {status !== "show" && status !== "reservation" ? (
         <Ticket
           type={status}
           show={selectedShow ?? shows[0]}
           params={confirmDetails}
+        />
+      ) : null}
+      {status === "reservation" ? (
+        <Reservation
+          params={confirmDetails}
+          onSubmit={(formData) =>
+            console.log("Reservation submitted with:", formData)
+          }
         />
       ) : null}
     </>

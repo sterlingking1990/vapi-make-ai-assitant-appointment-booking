@@ -1,24 +1,25 @@
 "use client";
 
 import { useVapi } from "../../hooks/useVapi";
+import { AppointmentSetup } from "./appointmentsetup";
 import { AssistantButton } from "./assistantButton";
 import { Display } from "./display";
 
 function Assistant() {
   const { toggleCall, callStatus, audioLevel } = useVapi();
   return (
-    <>
-      <div className="chat-history">
-        <Display />
-      </div>
-      <div className="user-input">
+    <div>
+      <div className="user-input mt-6 flex justify-center mb-6">
         <AssistantButton
           audioLevel={audioLevel}
           callStatus={callStatus}
           toggleCall={toggleCall}
-        ></AssistantButton>
+        />
       </div>
-    </>
+      <div>
+        <AppointmentSetup />
+      </div>
+    </div>
   );
 }
 

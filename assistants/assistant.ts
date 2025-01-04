@@ -1,90 +1,87 @@
 import { CreateAssistantDTO } from "@vapi-ai/web/dist/api";
-import { shows } from "../data/shows";
 
 export const assistant: CreateAssistantDTO | any = {
-  name: "Paula-broadway",
+  name: "HealthBuddy",
   model: {
     provider: "openai",
     model: "gpt-3.5-turbo",
     temperature: 0.7,
-    systemPrompt: `You're Paula, an AI assistant who can help the user decide what do he/she wants to watch on Broadway. User can ask you to suggest shows and book tickets. You can get the list of available shows from broadway and show them to the user, and then you can help user decide which ones to choose and which broadway theatre they can visit. After this confirm the details and book the tickets. `,
-    // Upcoming Shows are ${JSON.stringify(
-    //   shows
-    // )}
-    // `,
+    systemPrompt: `
+      Introduce yourself as Kassy from HealthBuddy Villa, you help users book healthcare appointments.
+      - You can suggest medical specialties based on symptoms described by the user.
+      - After suggesting the specialty, ask the user the day and time they will be willing to consult with the specialist.
+      - you can check the specialist availability based on the day and time the user has provided.
+      - If there is an availability, let the user know about this.
+      - Be empathetic, professional, and helpful in all interactions. Ask for the patient name and use it professionally during conversation
+      - Note: If no specialty is found, gracefully end the conversation with the user.
+    `,
     functions: [
       {
-        name: "suggestShows",
+        name: "suggestSpecialty",
         async: true,
-        description: "Suggests a list of broadway shows to the user.",
+        description: "Suggests the appropriate medical specialty based on the user's symptoms.",
         parameters: {
           type: "object",
           properties: {
-            location: {
+            symptoms: {
               type: "string",
-              description:
-                "The location for which the user wants to see the shows.",
-            },
-            date: {
-              type: "string",
-              description:
-                "The date for which the user wants to see the shows.",
+              description: "The symptoms or condition described by the user.",
             },
           },
         },
       },
       {
-        name: "confirmDetails",
-        async: true, // remove async to wait for BE response.
-        description: "Confirms the details provided by the user.",
+        name: "checkAvailability",
+        async: true,
+        description: "Checks doctor availability for a specific specialty based on the users given day and time.",
         parameters: {
           type: "object",
           properties: {
-            show: {
+            specialty: {
               type: "string",
-              description: "The show for which the user wants to book tickets.",
+              description: "The medical specialty the user needs (e.g., Cardiology, Neurology).",
             },
-            date: {
+            day: {
               type: "string",
-              description:
-                "The date for which the user wants to book the tickets.",
+              description: "The day for the requested appointment.",
             },
-            location: {
+            time: {
               type: "string",
-              description:
-                "The location for which the user wants to book the tickets.",
-            },
-            numberOfTickets: {
-              type: "number",
-              description: "The number of tickets that the user wants to book.",
+              description: "The time for the requested appointment.",
             },
           },
         },
       },
       {
-        name: "bookTickets",
-        async: true, // remove async to wait for BE response.
-        description: "Books tickets for the user.",
+        name: "bookAppointment",
+        async: true,
+        description: "Schedules an appointment for the user with a doctor.",
         parameters: {
           type: "object",
           properties: {
-            show: {
+            doctor: {
               type: "string",
-              description: "The show for which the user wants to book tickets.",
+              description: "The doctor's name for the appointment.",
             },
-            date: {
+            specialty:{
+              type:"string",
+              description:"The medical specialty the user needs (e.g., Cardiology, Neurology)."
+            },
+            day: {
               type: "string",
-              description:
-                "The date for which the user wants to book the tickets.",
+              description: "The day for the appointment.",
             },
-            location: {
+            time: {
               type: "string",
-              description:
-                "The location for which the user wants to book the tickets.",
+              description: "The time for the appointment.",
             },
-            numberOfTickets: {
-              type: "number",
-              description: "The number of tickets that the user wants to book.",
+            patientName: {
+              type: "string",
+              description: "The patient's name.",
+            },
+            reasonForVisit: {
+              type: "string",
+              description: "the symptoms complained about by patient for which they are booking an appointment.",
             },
           },
         },
@@ -95,9 +92,11 @@ export const assistant: CreateAssistantDTO | any = {
     provider: "11labs",
     voiceId: "paula",
   },
-  firstMessage:
-    "Hi. I'm Paula, Welcome to Broadway Shows! How are u feeling today?",
+  firstMessage: `
+    Hi, I'm HealthBuddy! I can help you book healthcare appointments and suggest the right specialist for your condition. 
+    Please tell me about your symptoms or let me know what you need assistance with.
+  `,
   serverUrl: process.env.NEXT_PUBLIC_SERVER_URL
     ? process.env.NEXT_PUBLIC_SERVER_URL
-    : "https://08ae-202-43-120-244.ngrok-free.app/api/webhook",
+    : "https://26a2-102-88-109-73.ngrok-free.app/api/webhook",
 };
