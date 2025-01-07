@@ -8,9 +8,9 @@ export default async function handler(
     return res.status(405).json({ message: "Method Not Allowed" });
   }
 
-  const { doctor, specialty, day, time, patientName, reasonForVisit } = req.body;
+  const { doctor, specialty, day, time, patientName, patientPhone, reasonForVisit } = req.body;
 
-  if (!doctor || !day || !time || !patientName || !specialty || !reasonForVisit) {
+  if (!doctor || !day || !time || !patientName || !patientPhone || !specialty || !reasonForVisit) {
     return res.status(400).json({
       message: "Missing required parameters. Please provide specialty, date, and time, patient Name, reason for vist.",
     });
@@ -22,7 +22,7 @@ export default async function handler(
     const response = await fetch(webhookUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ doctor, specialty, day, time, patientName, reasonForVisit }),
+      body: JSON.stringify({ doctor, specialty, day, time, patientName, patientPhone, reasonForVisit }),
     });
 
     // Log response status for debugging

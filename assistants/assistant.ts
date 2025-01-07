@@ -1,7 +1,7 @@
 import { CreateAssistantDTO } from "@vapi-ai/web/dist/api";
 
 export const assistant: CreateAssistantDTO | any = {
-  name: "HealthBuddy",
+  name: "Kassy",
   model: {
     provider: "openai",
     model: "gpt-3.5-turbo",
@@ -10,9 +10,11 @@ export const assistant: CreateAssistantDTO | any = {
       Introduce yourself as Kassy from HealthBuddy Villa, you help users book healthcare appointments.
       - You can suggest medical specialties based on symptoms described by the user.
       - After suggesting the specialty, ask the user the day and time they will be willing to consult with the specialist.
-      - you can check the specialist availability based on the day and time the user has provided.
+      - After the user has provided the day and time, you can check the specialist availability based on the day and time the user has provided.
       - If there is an availability, let the user know about this.
-      - Be empathetic, professional, and helpful in all interactions. Ask for the patient name and use it professionally during conversation
+      - The name and phone number is compulsory to completing the appointment booking. Only proceed to book appointment when you have these details.
+      - Be empathetic, professional, and helpful in all interactions.
+      - Let the user know the reason why the phone number is needed is because we will like to remind them of their appointment so they wouldnt miss it.
       - Note: If no specialty is found, gracefully end the conversation with the user.
     `,
     functions: [
@@ -61,7 +63,7 @@ export const assistant: CreateAssistantDTO | any = {
           properties: {
             doctor: {
               type: "string",
-              description: "The doctor's name for the appointment.",
+              description: "the name of the doctor.",
             },
             specialty:{
               type:"string",
@@ -78,6 +80,10 @@ export const assistant: CreateAssistantDTO | any = {
             patientName: {
               type: "string",
               description: "The patient's name.",
+            },
+            patientPhone:{
+              type:"string",
+              description:"The phone number of the patient with its country code."
             },
             reasonForVisit: {
               type: "string",

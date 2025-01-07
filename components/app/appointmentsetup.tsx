@@ -1,9 +1,11 @@
 import { Message, MessageTypeEnum } from "@/lib/types/conversation.type";
 import { vapi } from "@/lib/vapi.sdk";
-import React, { useEffect, useRef } from "react";
+import React, { ChangeEvent, useEffect, useRef } from "react";
 import { Loader2 } from "lucide-react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import "react-phone-input-2/lib/style.css"; // If using react-phone-input-2
+import PhoneInput from "react-phone-input-2";
 
 interface Appointment {
   appointmentID: string;
@@ -13,10 +15,21 @@ interface Appointment {
   appointmentTime: string;
 }
 
+interface FormData {
+  name: string;
+  phoneNumber: string;
+}
+
 function AppointmentSetup() {
   const [appointment, setAppointment] = React.useState<Appointment | null>(
     null
   );
+  const [formData, setFormData] = React.useState<FormData>({
+    name: "",
+    phoneNumber: "",
+  });
+
+  const [showForm, setShowForm] = React.useState(false);
 
   const detailsRef = useRef(null);
 
@@ -40,6 +53,29 @@ function AppointmentSetup() {
       pdf.addImage(imgData, "PNG", 10, 10, 180, 0); // Adjust dimensions as needed
       pdf.save("appointment-card.pdf");
     }
+  };
+
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (): void => {
+    console.log("Submitted data:", formData);
+    // Let Vapi know you have provided the details
+    vapi.send({
+      type: MessageTypeEnum.ADD_MESSAGE,
+      message: {
+        role: "system",
+        content: `Name and phone number are: ${JSON.stringify(formData)}`,
+      },
+    });
+    setShowForm(false); // Hide the form after submission.
   };
 
   useEffect(() => {
@@ -104,12 +140,12 @@ function AppointmentSetup() {
 
             if (response.ok) {
               console.log("Webhook response:", data);
-              if (data.doctorID === "") {
+              if (data.status === "not found") {
                 vapi.send({
                   type: MessageTypeEnum.ADD_MESSAGE,
                   message: {
                     role: "system",
-                    content: `The specialty you intend to consult is not available for that day and time`,
+                    content: data.message,
                   },
                 });
               } else {
@@ -123,6 +159,7 @@ function AppointmentSetup() {
                   },
                 });
               }
+              setShowForm(true);
             } else {
               console.error("Error in webhook response:", data.message);
               //setLoadingStatus("error"); // Failed to reserve
@@ -144,7 +181,6 @@ function AppointmentSetup() {
         })
           .then(async (response) => {
             const data = await response.json();
-            setAppointment(data);
 
             if (response.ok) {
               console.log("Webhook response:", data);
@@ -157,6 +193,7 @@ function AppointmentSetup() {
                   )}`,
                 },
               });
+              setAppointment(data);
             } else {
               console.error("Error in webhook response:", data.message);
               //setLoadingStatus("error"); // Failed to reserve
@@ -257,6 +294,56 @@ function AppointmentSetup() {
               Download as PDF
             </button>
           </div>
+        )}
+
+        {showForm && (
+          <form className="space-y-4">
+            <div>
+              <label
+                htmlFor="name"
+                className="block text-left text-blue-800 font-medium"
+              >
+                Name
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                className="w-full border border-blue-300 rounded-md px-4 py-2"
+                placeholder="Enter your name"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="phone"
+                className="block text-left text-blue-800 font-medium"
+              >
+                Phone Number
+              </label>
+              <PhoneInput
+                country={"us"}
+                value={formData.phoneNumber}
+                onChange={(phoneNumber) =>
+                  setFormData({ ...formData, phoneNumber })
+                }
+                inputProps={{
+                  name: "phone",
+                  required: true,
+                  className:
+                    "w-full border border-blue-300 rounded-md px-4 py-2",
+                }}
+              />
+            </div>
+            <button
+              type="button"
+              onClick={handleSubmit}
+              className="w-full bg-blue-500 text-white text-sm font-medium rounded-md px-4 py-2 hover:bg-blue-600 focus:ring focus:ring-blue-300 transition-all"
+            >
+              Submit
+            </button>
+          </form>
         )}
       </div>
     </div>
