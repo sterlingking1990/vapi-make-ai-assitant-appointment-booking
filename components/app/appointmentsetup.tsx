@@ -318,7 +318,7 @@ function AppointmentSetup() {
             <div>
               <label
                 htmlFor="phone"
-                className="block text-left text-blue-800 font-medium"
+                className="block text-left text-blue-800 font-medium mb-2"
               >
                 Phone Number
               </label>
@@ -332,8 +332,10 @@ function AppointmentSetup() {
                   name: "phone",
                   required: true,
                   className:
-                    "w-full border border-blue-300 rounded-md px-4 py-2",
+                    "w-full border border-blue-300 rounded-md pl-14 py-2", // Adds padding for the flag and code
                 }}
+                containerClass="phone-input-container" // Custom container class for extra styling
+                buttonClass="phone-input-button" // Custom button class for dropdown button
               />
             </div>
             <button
