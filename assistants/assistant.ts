@@ -62,7 +62,11 @@ export const assistant: CreateAssistantDTO | any = {
           properties: {
             doctor: {
               type: "string",
-              description: "the name of the doctor.",
+              description: "the doctor from the found specialty",
+            },
+            doctorID: {
+              type: "string",
+              description: "the doctorID from the found specialty"
             },
             specialty:{
               type:"string",

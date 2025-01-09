@@ -68,11 +68,19 @@ function AppointmentSetup() {
   const handleSubmit = (): void => {
     console.log("Submitted data:", formData);
     // Let Vapi know you have provided the details
+    let phoneNumber = formData.phoneNumber;
+    if (!phoneNumber.startsWith("+")) {
+      phoneNumber = `+${phoneNumber}`;
+    }
+    console.log("Submitted data:", { ...formData, phoneNumber });
     vapi.send({
       type: MessageTypeEnum.ADD_MESSAGE,
       message: {
         role: "system",
-        content: `Name and phone number are: ${JSON.stringify(formData)}`,
+        content: `Name and phone number are: ${JSON.stringify({
+          ...formData,
+          phoneNumber,
+        })}`,
       },
     });
     setShowForm(false); // Hide the form after submission.
@@ -154,7 +162,7 @@ function AppointmentSetup() {
                   message: {
                     role: "system",
                     content: `The specialty was found and available here are the details : ${JSON.stringify(
-                      data.doctor
+                      data
                     )}`,
                   },
                 });
@@ -194,6 +202,7 @@ function AppointmentSetup() {
                 },
               });
               setAppointment(data);
+              setShowForm(false);
             } else {
               console.error("Error in webhook response:", data.message);
               //setLoadingStatus("error"); // Failed to reserve
@@ -208,6 +217,7 @@ function AppointmentSetup() {
     const reset = () => {
       console.log("reset is done");
       setAppointment(null);
+      setShowForm(false);
     };
 
     vapi.on("message", onMessageUpdate);
