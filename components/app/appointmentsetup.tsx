@@ -153,7 +153,9 @@ function AppointmentSetup() {
                   type: MessageTypeEnum.ADD_MESSAGE,
                   message: {
                     role: "system",
-                    content: data.message,
+                    content: `${
+                      data.message
+                    } here are the details: ${JSON.stringify(data)}`,
                   },
                 });
               } else {
