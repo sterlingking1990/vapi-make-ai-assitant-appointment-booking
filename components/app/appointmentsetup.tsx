@@ -309,55 +309,60 @@ function AppointmentSetup() {
         )}
 
         {showForm && (
-          <form className="space-y-4">
-            <div>
-              <label
-                htmlFor="name"
-                className="block text-left text-blue-800 font-medium"
+          <div>
+            <p className="text-gray-700 font-medium text-center mb-4">
+              You can type in or speak
+            </p>
+            <form className="space-y-4">
+              <div>
+                <label
+                  htmlFor="name"
+                  className="block text-left text-blue-800 font-medium"
+                >
+                  Name
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  className="w-full border border-blue-300 rounded-md px-4 py-2"
+                  placeholder="Enter your name"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="phone"
+                  className="block text-left text-blue-800 font-medium mb-2"
+                >
+                  Phone Number
+                </label>
+                <PhoneInput
+                  country={"us"}
+                  value={formData.phoneNumber}
+                  onChange={(phoneNumber) =>
+                    setFormData({ ...formData, phoneNumber })
+                  }
+                  inputProps={{
+                    name: "phone",
+                    required: true,
+                    className:
+                      "w-full border border-blue-300 rounded-md pl-14 py-2", // Adds padding for the flag and code
+                  }}
+                  containerClass="phone-input-container" // Custom container class for extra styling
+                  buttonClass="phone-input-button" // Custom button class for dropdown button
+                />
+              </div>
+              <button
+                type="button"
+                onClick={handleSubmit}
+                className="w-full bg-blue-500 text-white text-sm font-medium rounded-md px-4 py-2 hover:bg-blue-600 focus:ring focus:ring-blue-300 transition-all"
               >
-                Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                className="w-full border border-blue-300 rounded-md px-4 py-2"
-                placeholder="Enter your name"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="phone"
-                className="block text-left text-blue-800 font-medium mb-2"
-              >
-                Phone Number
-              </label>
-              <PhoneInput
-                country={"us"}
-                value={formData.phoneNumber}
-                onChange={(phoneNumber) =>
-                  setFormData({ ...formData, phoneNumber })
-                }
-                inputProps={{
-                  name: "phone",
-                  required: true,
-                  className:
-                    "w-full border border-blue-300 rounded-md pl-14 py-2", // Adds padding for the flag and code
-                }}
-                containerClass="phone-input-container" // Custom container class for extra styling
-                buttonClass="phone-input-button" // Custom button class for dropdown button
-              />
-            </div>
-            <button
-              type="button"
-              onClick={handleSubmit}
-              className="w-full bg-blue-500 text-white text-sm font-medium rounded-md px-4 py-2 hover:bg-blue-600 focus:ring focus:ring-blue-300 transition-all"
-            >
-              Submit
-            </button>
-          </form>
+                Submit
+              </button>
+            </form>
+          </div>
         )}
       </div>
     </div>
