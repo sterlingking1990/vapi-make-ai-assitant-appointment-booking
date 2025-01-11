@@ -8,6 +8,7 @@ export default async function handler(
     return res.status(405).json({ message: "Method Not Allowed" });
   }
 
+
   const { specialty, day, time } = req.body;
 
   if (!specialty || !day || !time) {
