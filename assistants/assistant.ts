@@ -20,8 +20,8 @@ export const assistant: CreateAssistantDTO | any = {
        - Respond with: "I'm sorry, but there are no available appointments at that time. However, I have found availability on [suggested day and time]. Would you like to proceed with this new appointment time?"
        - Wait for the user's response. If they accept, proceed to finalize the booking with the new time. If they decline, ask if they would like to choose another day and time.
   6. Confirm the availability and ask for the patient's name and phone number.
-  7. Use the name and phone number provided to complete the booking and confirm the appointment.
-  8. You must confirm all details including the name and phone number with the patient before completing the booking process.
+  7. Use the name and phone number provided to book the appointment.
+  8. You must confirm all details including the name and phone number with the patient before booking the appointment.
 
   Example Interaction:
   User: I have a headache and a fever.
